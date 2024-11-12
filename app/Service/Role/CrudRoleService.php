@@ -32,10 +32,10 @@ class CrudRoleService{
     public function showRole($role_id){
         try{
             $role = Role::findOrFail($role_id);
-            return $role->users()->makeHidden('pivot')->get() ;
+            return $role->users()->get() ;
         }catch(Exception $e){
             Log::error('Error When show the Role '.$e->getMessage());
-            throw new Exception('There is an error in server.');
+            throw new Exception('There is an error in server '.$e->getMessage());
         }
     }
     /**

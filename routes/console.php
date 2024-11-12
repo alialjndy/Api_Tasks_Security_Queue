@@ -4,12 +4,13 @@ use App\Console\Commands\GenerateReport;
 use App\Jobs\GenerateDailyReport;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schedule;
+use Illuminate\Console\Scheduling\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-
-// Schedule::job(new GenerateDailyReport('completed'))->daily();
-// Schedule::job(new GenerateDailyReport('overdue'))->daily();
+app()->booted(function(){
+    $schedule = app(Schedule::class);
+    $schedule->command('app:generate-report')->daily();
+});

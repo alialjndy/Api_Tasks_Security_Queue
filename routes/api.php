@@ -38,7 +38,7 @@ Route::middleware([AdminMiddleware::class])->group(function(){
 
     Route::get('Comments',[CommentController::class,'index']);
 
-    Route::post('Task/{id}/attachments',[AttachmentController::class,'uploadFile']);
+    Route::post('Task/{id}/attachments',[AttachmentController::class,'uploadFile']); #TODO إختبر هذا الراوت
 
 });
 
@@ -51,3 +51,6 @@ Route::middleware([canCommentOnTaskMiddleware::class])->group(function (){
 });
 
 Route::get('reports/daily-tasks',[ReportController::class,'generate']);
+Route::post('filter_Generate_Report',[ReportController::class,'filterReportGenerate']);
+
+#TODO إضافة التحقق من خلو الملف المرفق من الفيروسات والتحقق من اللاحقة الخاصة به

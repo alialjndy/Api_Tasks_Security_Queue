@@ -15,7 +15,7 @@ class AuthController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware(middleware:'auth:api',except:['login']),
+            new Middleware(middleware:'auth:api',except:['login','me']),
         ];
     }
     public function __construct(AuthService $authService){

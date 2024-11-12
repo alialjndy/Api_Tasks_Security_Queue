@@ -13,7 +13,7 @@ class CrudUserService{
             return $User ;
         }catch(Exception $e){
             Log::error('Error When Create a User '.$e->getMessage());
-            throw new Exception('There is an error in server.');
+            throw new Exception('There is an error in server. ',400);
         }
     }
     public function showUser($User_id){

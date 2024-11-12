@@ -32,16 +32,8 @@ class CommentController extends Controller
      */
         public function store(CreateCommentsRequest $request,$task_id)
         {
-            $user = JWTAuth::ParseToken()->authenticate();
-            $user_id = $user->id ;
             $data = $request->validated();
-            $task = Task::findOrFail($task_id);
-
-
-            $task->comments()->create([
-                'content' => $data['content'],
-                'user_id' => $user_id
-            ]);
+            $this->crudCommentService->createCommentRelatedWithTask($data,$task_id);
             return ApiResponse::successStore(null ,'comment');
         }
 

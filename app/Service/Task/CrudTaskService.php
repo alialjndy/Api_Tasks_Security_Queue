@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CrudTaskService{
@@ -72,7 +73,7 @@ class CrudTaskService{
      */
     public function showTask(string $task_id){
         try{
-            $task = Task::with('subTasks')->findOrFail($task_id);
+            $task = Task::with('subTasks')->find($task_id);
             return $task ;
         }catch(Exception $e){
             Log::error('Error When show Task '.$e->getMessage());
@@ -154,7 +155,7 @@ class CrudTaskService{
             }
 
             if($task->Assigned_to != $user->id){ // test if Auth user can update task status
-                throw new Exception('You cant update status for this task');
+                throw new HttpException(403, 'You cant update status for this task');
             }
 
             if($task->subTasks()->where('status','!=','Completed')->exists()){
@@ -179,9 +180,12 @@ class CrudTaskService{
 
 
             return $task ;
-        }catch(Exception $e){
+        }catch(HttpException $e){
             Log::error('Error When change status Task '.$e->getMessage());
-            throw new Exception('There is an error in server '.$e->getMessage());
+            throw new HttpException(403,'There is an error in server '.$e->getMessage());
+        }catch(Exception $e){
+            Log::error('Error When change status task '.$e->getMessage());
+            throw new HttpException(500, 'An unexcpected error occurred');
         }
     }
     /**

@@ -49,7 +49,7 @@ class CrudTaskController extends Controller
      */
     public function show(string $id)
     {
-        $task = Cache::remember('task'.$id , 60 , function ($id){
+        $task = Cache::remember('task'.$id , 1, function () use($id){
             return $this->crudTaskService->showTask($id);
         });
         return ApiResponse::successShow($task);
@@ -64,6 +64,7 @@ class CrudTaskController extends Controller
         $data = $request->validated();
         $this->crudTaskService->updateTask($data,$id);
         Cache::forget('tasks');
+        Cache::forget('task'.$id);
         return ApiResponse::successUpdate('task');
     }
 
@@ -74,6 +75,7 @@ class CrudTaskController extends Controller
     {
         $this->crudTaskService->deleteTask($id);
         Cache::forget('tasks');
+        Cache::forget('task'.$id);
         return ApiResponse::successDelete('task');
     }
     /**
@@ -91,6 +93,8 @@ class CrudTaskController extends Controller
      */
     public function forceDelete(string $task_id){
         $this->crudTaskService->forceDelete($task_id);
+        Cache::forget('tasks');
+        Cache::forget('task'.$task_id);
         return ApiResponse::successDelete('task');
     }
     /**
@@ -100,6 +104,7 @@ class CrudTaskController extends Controller
      */
     public function restore(string $task_id){
         $task = $this->crudTaskService->restore($task_id);
+        Cache::forget('tasks');
         return ApiResponse::success('Task restored successfully',200,$task);
     }
     /**
@@ -121,7 +126,11 @@ class CrudTaskController extends Controller
      */
     public function changeStautsTask(ChangeStatusRequest $reqeust , string $task_id){
         $data = $reqeust->validated();
-        $this->crudTaskService->changeStatusTask($data,$task_id);
+        $res = $this->crudTaskService->changeStatusTask($data,$task_id);
+
+        Cache::forget('tasks');
+        Cache::forget('task'.$task_id);
+
         return ApiResponse::success('task change status successsfully',200);
     }
     /**
@@ -133,6 +142,8 @@ class CrudTaskController extends Controller
     public function reAssignUserTask(ChangeAssignedUserRequest $request , string $task_id){
         $data = $request->validated();
         $this->crudTaskService->changeAssignedUserTask($data['Assigned_to'],$task_id);
+        Cache::forget('tasks');
+        Cache::forget('task'.$task_id);
         return ApiResponse::success('Task reAssigned successfully',200);
     }
     /**
@@ -144,6 +155,8 @@ class CrudTaskController extends Controller
     public function assignTask(AssignTaskToUserRequest $request , $task_id){
         $data = $request->validated();
         $task = $this->crudTaskService->assignTaskToUser($data , $task_id);
+        Cache::forget('tasks');
+        Cache::forget('task'.$task_id);
         return ApiResponse::success('Task Assigned successfully',200,$task);
     }
 

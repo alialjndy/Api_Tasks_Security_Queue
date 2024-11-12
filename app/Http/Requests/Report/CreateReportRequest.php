@@ -1,25 +1,18 @@
 <?php
 
-namespace App\Http\Requests\Role;
+namespace App\Http\Requests\Report;
 
-use App\Models\User;
-use App\Response\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class CreateRoleRequest extends FormRequest
+class CreateReportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user && $user->hasRole('admin')){
-            return true ;
-        }
-        return ApiResponse::error('UnAuthorized',403);
+        return true;
     }
 
     /**
@@ -30,7 +23,7 @@ class CreateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string|min:3|max:40|unique:roles,name'
+            'report_type'=>'required|in:in_progress_tasks,overdue_tasks,blocked_tasks,completed_tasks'
         ];
     }
     public function failedValidation(\Illuminate\Contracts\Validation\Validator $validator){
@@ -44,16 +37,13 @@ class CreateRoleRequest extends FormRequest
     }
     public function attributes(){
         return [
-            'name'=>'Role Name'
+            'report_type'=>'Report Type'
         ];
     }
     public function messages(){
         return [
             'required'=>'Error : The :attribute field is required',
-            'string'=>'Error : The :attribute field value must be a string',
-            'max'=>'Error : The :attribute max character is :max',
-            'min'=>'Error : The :attribute min character is :min',
-            'unique'=>'Error : The :attribute field value must be a unique'
+            'in'=>'Error : The :attribute field value is Invalid '
         ];
     }
 }
